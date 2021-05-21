@@ -18,6 +18,10 @@ Q: Does that mean, we can get rid of VM's.
 
 A: No,.We can run a VM  with docker engine installed. Since you can install multiple isolated application within each Docker container within the same VM, you might have to create fewer VM images. Also, you can scale VM  vertically to increase /decrease CPUs and  intern allow optimizing the workload on the server.
 
+Q: Why use Docker at all !!
+
+A:  Image you need to run a  python application and connect to a Backend database and frontend React JS application. As a developer, you will have to ensure that you install the right version of Python, and the validated version of database drivers  and is compatible  with front end.  Next, a system administrator has to understand the installation process in development and test the install in UAT and then in production. -- There is a lot of  time and resources used to ensure that compatibility and of application, the version of libraries and underlying O.S version are all exactly the same so that you can  deploy successfully. You can say, there is some flexibility with VMs, but as mentioned  earlier, they take up  
+
 Q: Why is Docker containers considered lighter than VMs.
 
 A: 
