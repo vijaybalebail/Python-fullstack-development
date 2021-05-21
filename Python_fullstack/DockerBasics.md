@@ -1,8 +1,26 @@
 
 
+## What is Docker?
+
+**Docker** is a software development platform for virtualization with multiple Operating systems running on the same host. It helps to separate infrastructure and applications in order to deliver software quickly. Unlike Hypervisors, which are used for creating VM (Virtual machines), virtualization in Docker is performed on system-level, also called Docker containers.
+
+As you can see the difference in the image below, Docker containers run on top of the host's Operation system. This helps you to improves efficiency and security. Moreover, we can run more containers on the same infrastructure than we can run Virtual machines because containers use fewer resources.
+
+[![Virtualization in Docker vs Hypervisor](https://www.guru99.com/images/1/101818_0504_DockerTutor1.png)](https://www.guru99.com/images/1/101818_0504_DockerTutor1.png)
+
+Virtualization in Docker vs Hypervisor
+
+Unlike the VMs which can communicate with the hardware of the host (ex: Ethernet adapter to create more virtual adapters) Docker containers run in an isolated environment on top of the host's OS. 
 
 
 
+Q: Does that mean, we can get rid of VM's. 
+
+A: No,.We can run a VM  with docker engine installed. Since you can install multiple isolated application within each Docker container within the same VM, you might have to create fewer VM images. Also, you can scale VM  vertically to increase /decrease CPUs and  intern allow optimizing the workload on the server.
+
+Q: Why is Docker containers considered lighter than VMs.
+
+A: 
 
 
 
