@@ -17,7 +17,11 @@
         "filename": "../../setup-dev-environment/setup-dev-environment.md"
       },
       {
-        "title": "Lab 2: Backend (Java/Helidon)",
+        "title": "Lab 2: Backend (Docker basics and Oracle Backend drivers)",
+        "filename": "../../Python_fullstack/DockerBasics.md"
+      },
+      {
+        "title": "Lab 3: Backend (Python/Flask)",
         "filename": "../../backend/backend.md"
       },
       {

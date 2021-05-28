@@ -10,21 +10,21 @@ As you can see the difference in the image below, Docker containers run on top o
 
 Virtualization in Docker vs Hypervisor
 
-Unlike the VMs which can communicate with the hardware of the host (ex: Ethernet adapter to create more virtual adapters) Docker containers run in an isolated environment on top of the host's OS. 
+Unlike the VMs which can communicate with the hardware of the host (ex: Ethernet adapter to create more virtual adapters) Docker containers run in an isolated environment on top of the host's OS. Since Oracle prefers to run its products in Oracle Lunix, installing docker in Oracle Linux is preferable. You also can use Oracle slim set of libraries with each docker application to ensure you have the bacis O.S libraries that Oracle requires to run its products. ( more details in the workshop)
 
 
 
-Q: Does that mean, we can get rid of VM's. 
+Q: Does that mean, we can get rid of VM's.
 
 A: No,.We can run a VM  with docker engine installed. Since you can install multiple isolated application within each Docker container within the same VM, you might have to create fewer VM images. Also, you can scale VM  vertically to increase /decrease CPUs and  intern allow optimizing the workload on the server.
 
 Q: Why use Docker at all !!
 
-A:  Image you need to run a  python application and connect to a Backend database and frontend React JS application. As a developer, you will have to ensure that you install the right version of Python, and the validated version of database drivers  and is compatible  with front end.  Next, a system administrator has to understand the installation process in development and test the install in UAT and then in production. -- There is a lot of  time and resources used to ensure that compatibility and of application, the version of libraries and underlying O.S version are all exactly the same so that you can  deploy successfully. You can say, there is some flexibility with VMs, but as mentioned  earlier, they take up  
+A:  Image you need to run a  python application and connect to a Backend database and frontend React JS application. As a developer, you will have to ensure that you install the right version of O.S, Python, and the validated version of database drivers. You have to ensure that all the backend is compatible with front end.  Next, a system administrator has to understand the installation process in development and test the install in UAT and then in production. -- There is a lot of  time and resources used to ensure that compatibility and of application, the version of libraries and underlying O.S version are all exactly the same so that you can  deploy successfully. You can say, there is some flexibility with VMs, but as mentioned earlier, they take up a lot of time and resources to test this and also susceptible to human errors. Also, You cannot control a linux server environment change over time due to adding or upgrading some libraries that could prtentally conflict with the application being run.   
 
 Q: Why is Docker containers considered lighter than VMs.
 
-A: 
+A: A docker application depends heavily on the libraries of the O.S where its installed to do most of the work. So, in linux environments like Oracle Linux, Ubuntu, Redhat, etc, We have a set of libraries slightly different in each of them, but the underlying O.S will be the same. These different set of libraries like Oracle-slim ( 300MB in size) is what we recommend to install along with the application to run in Oracle Linux environment.  
 
 
 
@@ -110,7 +110,7 @@ From the oraclelinux:7-slim image you can build another image that includes Orac
   ```
   $ echo /opt/oracle/instantclient_19_5 > /etc/ld.so.conf.d/oic.conf
   $ ldconfig
-      
+
   ```
 
 Commands for these steps are put into a file called "Dockerfile". They are the recipe used to create an image, which can then be started (and stopped) as a running "container".
