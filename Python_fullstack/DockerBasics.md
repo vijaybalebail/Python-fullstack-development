@@ -12,7 +12,7 @@ Virtualization in Docker vs Hypervisor
 
 Unlike the VMs which can communicate with the hardware of the host (ex: Ethernet adapter to create more virtual adapters) Docker containers run in an isolated environment on top of the host's OS. Since Oracle prefers to run its products in Oracle Lunix, installing docker in Oracle Linux is preferable. You also can use Oracle slim set of libraries with each docker application to ensure you have the bacis O.S libraries that Oracle requires to run its products. ( more details in the workshop)
 
-
+![](images/VM_to_docker.png " ")
 
 Q: Does that mean, we can get rid of VM's.
 
@@ -26,6 +26,21 @@ Q: Why is Docker containers considered lighter than VMs.
 
 A: A docker application depends heavily on the libraries of the O.S where its installed to do most of the work. So, in linux environments like Oracle Linux, Ubuntu, Redhat, etc, We have a set of libraries slightly different in each of them, but the underlying O.S will be the same. These different set of libraries like Oracle-slim ( 300MB in size) is what we recommend to install along with the application to run in Oracle Linux environment.  
 
+![](images/dockerLayers.png " ")
+
+As an example, above figure depicts a container image created on the local host by pulling an Oracle Linux 6.5 image  ( oraclelinux:6-slim) from the Docker Hub Registry. The following docker run command runs the base Oracle Linux 6.5 image as a container named ContainerA.
+
+Now the administrator can add a layer by installing Apache web server packages and web server content. Once the container is installed and configured, the configuration can be committed generating a new Docker image named ContainerAprime.
+
+
+Q : Can we have Oracle Database as a Docker Application.
+A : Yes, you can. However, for production environments that needs scalability, performance, High availability, it is recommended to run the DB on a separate server and connect to the middle tier which in Docker. Unlike most of the database, Oracle Database has has scalability, performance, availability and consolidated featues of several spacalised database like JSON DB, XML DB, Graph DB, spacial and analytical DB.
+
+Oracle pluggable database features like isolation, rapid cloning, easy upgrades compliments Applications in the middle tier.
+
+![](images/Multitenant_docker.png " ")
+
+Having mentioned that its best to keep Oracle Database outsize the application middle-tier. If the architecture requires docker for all deployments, then its recommended create just one consolidated docker image with any number of pluggable databases as required for different applications.
 
 
 # Part 1: Docker for Oracle Database Applications in Node.js and Python
