@@ -34,13 +34,17 @@ Now the administrator can add a layer by installing Apache web server packages a
 
 
 Q : Can we have Oracle Database as a Docker Application.
-A : Yes, you can. However, for production environments that needs scalability, performance, High availability, it is recommended to run the DB on a separate server and connect to the middle tier which in Docker. Unlike most of the database, Oracle Database has has scalability, performance, availability and consolidated featues of several spacalised database like JSON DB, XML DB, Graph DB, spacial and analytical DB.
+A : Yes, you can. However, for production environments that needs scalability, performance, High availability, it is recommended to run the DB on a separate server and connect to the middle tier which in Docker. Unlike most of the database, Oracle Database has has scalability, performance, availability and consolidated features of several specialized database like JSON DB, XML DB, Graph DB, spatial and analytical DB. Oracle Cloud offers several flavors of database which is ideal to integrate with applications in docker container as well.
 
 Oracle pluggable database features like isolation, rapid cloning, easy upgrades compliments Applications in the middle tier.
 
 ![](images/Multitenant_docker.png " ")
 
-Having mentioned that its best to keep Oracle Database outsize the application middle-tier. If the architecture requires docker for all deployments, then its recommended create just one consolidated docker image with any number of pluggable databases as required for different applications.
+Having mentioned that its best to keep Oracle Database outsize the application middle-tier. If the architecture requires docker for all deployments, then its recommended to create just one consolidated docker image with a single Oracle database. Any number of pluggable databases can be created as required by the different applications.
+
+![](images/goodbad.png " ")
+
+ Its not a good idea to deploy a Oracle database for each application. This will unnecessarily have multiple layes of isolation and extra management of the database which can be avoided.
 
 
 # Part 1: Docker for Oracle Database Applications in Node.js and Python
