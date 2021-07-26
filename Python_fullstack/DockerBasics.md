@@ -20,7 +20,11 @@ A: No,.We can run a VM  with docker engine installed. Since you can install mult
 
 ## Q: Why use Docker at all !!
 
-A:  Image you need to run a  python application and connect to a Backend database and frontend React JS application. As a developer, you will have to ensure that you install the right version of O.S, Python, and the validated version of database drivers. You have to ensure that all the backend is compatible with front end.  Next, a system administrator has to understand the installation process in development and test the install in UAT and then in production. -- There is a lot of  time and resources used to ensure that compatibility and of application, the version of libraries and underlying O.S version are all exactly the same so that you can  deploy successfully. You can say, there is some flexibility with VMs, but as mentioned earlier, they take up a lot of time and resources to test this and also susceptible to human errors. Also, You cannot control a linux server environment change over time due to adding or upgrading some libraries that could prtentally conflict with the application being run.   
+A:  Image you need to run a  python application and connect to a Backend database and frontend React JS application. As a developer, you will have to ensure that you install the right version of O.S, Python, and the validated version of database drivers. You have to ensure that all the backend is compatible with front end.  Next, a system administrator has to understand the installation process in development and test the install in UAT and then in production. -- There is a lot of  time and resources used to ensure that compatibility and of application, the version of libraries and underlying O.S version are all exactly the same so that you can  deploy successfully. You can say, there is some flexibility with VMs, but as mentioned earlier, they take up a lot of time and resources to test this and also susceptible to human errors. Also, You cannot control a linux server environment change over time due to adding or upgrading some libraries that could parentally conflict with the application being run.
+
+Below is a sample of application matrix between application, O.S, Python libraries, and Compiler versions. This could get further complicated when the application depends on another application like streams, memory cache to run it. Having a docker image with the required libraries and tested during creation of a docker image will ensure that you will get the same set of libraries, when anywhere you run that Docker image.   
+
+![](images/zfyCn.png " ")
 
 ## Q: Why is Docker containers considered lighter than VMs.
 
@@ -35,7 +39,7 @@ Now the administrator can add a layer by installing Apache web server packages a
 
 ## Q: Can we have Oracle Database as a Docker Application.
 
-A : Yes, you can. However, for production environments that needs scalability, performance, High availability, it is recommended to run the DB on a separate server and connect to the middle tier which in Docker. Unlike most of the database, Oracle Database has has scalability, performance, availability and consolidated features of several specialized database like JSON DB, XML DB, Graph DB, spatial and analytical DB. Oracle Cloud offers several flavors of database which is ideal to integrate with applications in docker container as well.
+A : Yes, you can. However, for production environments that needs scalability, performance, high availability, it is recommended to run the DB on a separate server and connect to the middle tier which in Docker. Unlike most of the database, Oracle Database has scalability, performance, availability and consolidated features of several specialized database like JSON DB, XML DB, Graph DB, spatial and analytical DB, Memory Cache, InMemory DB, ML DB , etc. Oracle even provides Oracle database images or dockerfiles to quickly run it as a application..
 
 Oracle pluggable database features like isolation, rapid cloning, easy upgrades compliments Applications in the middle tier.
 
