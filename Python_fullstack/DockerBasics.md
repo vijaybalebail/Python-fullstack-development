@@ -208,7 +208,7 @@ $ docker image prune
 The Instant Client image can then be used to create a third image that has the desired language and database access API. Starting with an example that uses Python and the cx_Oracle driver (aka API) for Oracle Database, a Dockerfile is:
 
 ```
-FROM oraclelinuxSlim/ic19
+FROM oraclelinuxSlim/ic19c
 
 RUN yum install -y oracle-epel-release-el7 && \
     yum install -y python36 && \
@@ -218,7 +218,14 @@ RUN yum install -y oracle-epel-release-el7 && \
 
 This installs Python 3. Other versions of Python could be used, see [Oracle Linux for Python Developers](https://yum.oracle.com/oracle-linux-python.html).
 
-With this Dockerfile in ~/docker/python/Dockerfile, an image can be built:
+```
+<copy>
+mkdir ~docker/python
+cd ~docker/python
+wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/Dockerfile
+</copy>
+```
+With this Dockerfile in ~/docker/python/Dockerfile, an image with a new layer can be built:
 
 ```
 $ sudo docker build -t Oracle19c/python ~/docker/python/
