@@ -136,12 +136,6 @@ RUN  yum -y install oracle-release-el7 && \
 
 
 
-In cloud shell, create a directory and create a Dockerfile
-
-```
-mkdir docker/ic19c
-cd ~docker/ic19c
-```
 
 The "FROM oraclelinux:7-slim" line means the Docker image to be created will be based on the Oracle Linux image we pulled previously.
 Next to install the Instant Client Basic Light package on the previous pulled image the **yum** commands are listed.
@@ -150,29 +144,10 @@ There are similar Dockerfiles available on [GitHub](https://github.com/oracle/do
 
 For oraclelinux 7 and instantclient 19c, the docker file to use is ![this.](https://github.com/oracle/docker-images/blob/main/OracleInstantClient/oraclelinux7/19/Dockerfile)
 This workshop has simply copied the contents of the above URL.
-```
-<copy>
-# Dockerfile from link https://github.com/oracle/docker-images/blob/main/OracleInstantClient/oraclelinux7/19/Dockerfile
-
-FROM oraclelinux:7-slim
-
-ARG release=19
-ARG update=11
-
-RUN  yum -y install oracle-release-el7 && \
-     yum -y install oracle-instantclient${release}.${update}-basic oracle-instantclient${release}.${update}-devel oracle-instantclient${release}.${update}-sqlplus && \
-     rm -rf /var/cache/yum
-
-# Uncomment if the tools package is added
-# ENV PATH=$PATH:/usr/lib/oracle/${release}.${update}/client64/bin
-
-CMD ["sqlplus", "-v"]
-</copy>
-```
 
 ```
-mkdir docker/ic19c
-cd ~docker/ic19c
+mkdir ~/docker/ic19c
+cd ~/docker/ic19c
  wget https://raw.githubusercontent.com/oracle/docker-images/main/OracleInstantClient/oraclelinux7/19/Dockerfile
 ```
 
@@ -181,7 +156,8 @@ cd ~docker/ic19c
 One you have saved the above commands as ~/docker/ic19/Dockerfile, a Docker image can be built by running:
 
 ```
-$ sudo docker build -t oraclelinuxSlim/ic19c ~/docker/ic19c/
+$ <copy> docker build -t oracleslim19ic  ~/docker/ic19c/
+</copy>
 ```
 
 The "-t oraclelinuxSlim/ic19c" option names the resulting image as "oraclelinuxSlim/ic19":
