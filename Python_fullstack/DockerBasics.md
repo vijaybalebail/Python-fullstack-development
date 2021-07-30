@@ -52,18 +52,10 @@ Having mentioned that its best to keep Oracle Database outsize the application m
  Its not a good idea to deploy a Oracle database for each application. This will unnecessarily have multiple layes of isolation and extra management of the database which can be avoided.
 
 
-# Part 1: Docker for Oracle Database Applications in Node.js and Python
+# TASK 1: Docker for Oracle Database Applications in Node.js and Python
 
-[Christopher Jones](https://blogs.oracle.com/author/christopher-jones)
-SENIOR PRINCIPAL PRODUCT MANAGER
-
-Welcome to this two part series on using Docker for Oracle Database applications.
-
-- Part 1: Installing Docker and Creating Images with the Oracle Client
-- [Part 2: Creating Docker containers that connect to Oracle Database](https://blogs.oracle.com/opal/docker-for-oracle-database-applications-in-nodejs-and-python-part-2)
-
+In this section, we will create a docker image with Python or Note.js ,Oracle Instant Client and connect to Oracle Database and Oracle Autonomous DB in Oracle Cloud.
 The examples are for Node.js and Python, but the concepts are also useful for the many other languages whose database APIs are implemented on top of [Oracle Call Interface](https://www.oracle.com/pls/topic/lookup?ctx=dblatest&id=LNOCI); these other languages include C, PHP, Go, Ruby, Rust, Erlang, Julia, Nim, and Haskell.
-
 
 
 ## Installing Docker and Creating Images with the Oracle Client
@@ -72,7 +64,7 @@ The examples are for Node.js and Python, but the concepts are also useful for th
 
 Docker makes it easy to develop and deploy applications. In crude terms Docker is a technology allowing you to run virtual computers. It lets you build these running Docker "containers" from layers of instructions. Docker containers are becoming prevalent in application deployments, particular in a cloud world where automation is important. Docker lets you easily control that deployment.
 
-In this post I will look at application tier, which is the most interesting piece of the architecture where automation helps greatly for frequent changes and multiple deployments. For a deeper discussion on why Docker is cool, see the Database-focused presentation [Best Practices for running Oracle Database on Docker](https://de.slideshare.net/gvenzl/oracle-database-on-docker-best-practices-92806097).
+In this workshop, we will look at application tier, which is the most interesting piece of the architecture where automation helps greatly for frequent changes and multiple deployments. For a deeper discussion on why Docker is cool, see the Database-focused presentation [Best Practices for running Oracle Database on Docker](https://de.slideshare.net/gvenzl/oracle-database-on-docker-best-practices-92806097).
 
 ### Docker Terminology
 
@@ -94,56 +86,43 @@ $ sudo yum install yum-utils
 $ sudo yum-config-manager --enable *addons
 $ sudo yum install docker-engine
 ```
-
-To use Docker you may need some optional proxy configuration, shown later. You can also decide about allowing [non-root access](https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user). Alternatively, all docker commands need to be prefixed with sudo or otherwise run as the root user.
+In this workshop, we are using Cloud shell which comes with Docker installed. In Lab 1, we created a oracle Register for creating a private repository of your images.
 
 ### Pulling an Image from the Docker Registry
-
-Now that you have Docker, you can pull an operating system Docker image from [Docker Hub](https://hub.docker.com/_/oraclelinux/). This will be the base that we add the application stack to. Most, but not all, of the Docker images in this blog post will be based on Oracle Linux. I'll also show some Debian images to indicate differences.
+There is a publick image of Oracle Operating system in Docker public registry. you can pull an operating system Docker image from [Docker Hub](https://hub.docker.com/_/oraclelinux/). This will be the base that we add the application stack to.
 
 To get an Oracle Linux image run:
 
 ```
-$ sudo docker image pull oraclelinux:7-slim
+$ <copy> docker image pull oraclelinux:7-slim </copy>
 ```
 
-Once it has completed you can view the image:
+Once the image is pulled from Docker public registry, you can view the image:
 
 ```
-$ sudo docker images
+$ <copy> docker images </copy>
 REPOSITORY           TAG         IMAGE ID        CREATED          SIZE
 oraclelinux          7-slim      874477adb545    3 weeks ago      118MB
 ```
 
 This is the Oracle Linux 7 image of reduced size, aka 'slim'. This will be the first layer of the application stack.
 
-### Building an Oracle Instant Client Image
+## Building an Oracle Instant Client Image
 
-The standard architecture for scripting languages like Python, Node.js, PHP, Ruby, Go and other C-based languages requires Oracle client libraries to be installed. For example, with Python:
+The standard architecture for scripting languages like Python, Node.js, PHP, Ruby, Go and other C-based languages requires Oracle client libraries to be installed. For example, with Python, you need cx_Oracle library and OracleInstantClient to be installed to connect to a database.
 
 ![img](https://cdn.app.compendium.com/uploads/user/e7c690e8-6ff9-102a-ac6d-e4aebca50425/c352d68a-546c-4af7-94d8-04e1e09e802c/File/aa2db2bc4ca0e6f957bf522e9e9b3f6d/cx_oracle_arch.png)
 
-From the oraclelinux:7-slim image you can build another image that includes Oracle client libraries. For Docker, we use the free [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client.html). Applications need:
+From the oraclelinux:7-slim image you can build the next layer image that includes Oracle client libraries. For Docker, we use the free [Oracle Instant Client](https://www.oracle.com/database/technologies/instant-client.html).
 
-- An Instant Client 'Basic' or 'Basic Light' package for Linux 64-bit. The difference between the two is the number of character sets supported and number of error message languages. Both packages support applications that use UTF-8 (and others - refer to the Instant Client documentation). Instant Client license information is in the README and LICENSE files installed by the packages.
 
-- The libaio package from yum needs to be installed. On Debian, get the equivalent libaio1 using apt-get.
+There are multiple ways that you can install Instant Client in an image. If you are starting with a base image on Oracle linux, then Using Dockerfiles is the best option. If you are looking at installing Oracle instant client on Linux distributions, such as Ubuntu or Debian, , then you can refer to this [Blog](https://blogs.oracle.com/opal/docker-for-oracle-database-applications-in-nodejs-and-python-part-1) for minor changes..
 
-- The system library search path needs to be configured to include the Oracle libraries, for example with:
 
-  ```
-  $ echo /opt/oracle/instantclient_19_5 > /etc/ld.so.conf.d/oic.conf
-  $ ldconfig
 
-  ```
+**Instant Client Dockerfile  **
 
-Commands for these steps are put into a file called "Dockerfile". They are the recipe used to create an image, which can then be started (and stopped) as a running "container".
-
-There are multiple ways that you can install Instant Client in an image.
-
-**Instant Client Dockerfile Example 1**
-
-The easiest way to install Instant Client is to pull it directly from yum. A Dockerfile for this is:
+The easiest way to install Instant Client is to pull it directly from yum. A sample Dockerfile for this is below. you can include all the instructions required to build the next layer of the image in this Dockerfile.
 
 ```
 # Dockerfile using yum Instant Client RPMs
@@ -155,143 +134,81 @@ RUN  yum -y install oracle-release-el7 && \
      rm -rf /var/cache/yum
 ```
 
-I'll show how to create an image from this Dockerfile a bit lower.
 
-**Update**: New releases of Instant Client are in a different repo, see [Instant Client for Oracle Linux](https://yum.oracle.com/oracle-instant-client.html).
 
-**Update**: Prebuilt Instant Client images are available from[ oraclelinux7-instantclient](https://github.com/orgs/oracle/packages/container/package/oraclelinux7-instantclient) and [oraclelinux8-instantclient](https://github.com/orgs/oracle/packages/container/package/oraclelinux8-instantclient). There are also images for Node.js and Python and other languages on the same [Oracle GitHub Container Registry](https://github.com/orgs/oracle/packages).
-
-The FROM line means the Docker image to be created will be based on the Oracle Linux image we pulled previously. Then some commands will be run to install the Instant Client Basic Light package. The magic of yum package dependencies will automatically pull in libaio, as required. The Instant Client 19 RPM packages set up the library search path automatically (older versions do not), so there is no need to explicitly run ldconfig.
-
-There are similar Dockerfiles available on [GitHub](https://github.com/oracle/docker-images/tree/master/OracleInstantClient)
-
-**Instant Client Dockerfile Example 2**
-
-This second method of installing Instant Client is more useful for Linux distributions, such as Ubuntu or Debian, that do not use RPM packages. Instead, Instant Client Zip files are pulled from [OTN](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html). A Dockerfile that does this is:
+In cloud shell, create a directory and create a Dockerfile
 
 ```
-# Dockerfile using Instant Client Zips from OTN
+mkdir docker/ic19c
+cd ~docker/ic19c
+```
+
+The "FROM oraclelinux:7-slim" line means the Docker image to be created will be based on the Oracle Linux image we pulled previously.
+Next to install the Instant Client Basic Light package on the previous pulled image the **yum** commands are listed.
+
+There are similar Dockerfiles available on [GitHub](https://github.com/oracle/docker-images/tree/master/OracleInstantClient) for Linux 7 or 8. and versions of instant client 12c through 21.
+
+For oraclelinux 7 and instantclient 19c, the docker file to use is ![this.](https://github.com/oracle/docker-images/blob/main/OracleInstantClient/oraclelinux7/19/Dockerfile)
+This workshop has simply copied the contents of the above URL.
+```
+<copy>
+# Dockerfile from link https://github.com/oracle/docker-images/blob/main/OracleInstantClient/oraclelinux7/19/Dockerfile
 
 FROM oraclelinux:7-slim
 
-WORKDIR /opt/oracle
+ARG release=19
+ARG update=11
 
-RUN yum install -y wget unzip libaio && \
-    rm -rf /var/cache/yum
-RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip && \
-    unzip instantclient-basiclite-linuxx64.zip && \
-    rm -f instantclient-basiclite-linuxx64.zip && \
-    cd instantclient* && \
-    rm -f *jdbc* *occi* *mysql* *jar uidrvci genezi adrci && \
-    echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf && \
-    ldconfig
+RUN  yum -y install oracle-release-el7 && \
+     yum -y install oracle-instantclient${release}.${update}-basic oracle-instantclient${release}.${update}-devel oracle-instantclient${release}.${update}-sqlplus && \
+     rm -rf /var/cache/yum
+
+# Uncomment if the tools package is added
+# ENV PATH=$PATH:/usr/lib/oracle/${release}.${update}/client64/bin
+
+CMD ["sqlplus", "-v"]
+</copy>
 ```
 
-The WORKDIR instruction sets the working directory for RUN, COPY, ADD and similar instructions that follow it. If the WORKDIR directory doesn't exist, it will be created. Note: you should review Oracle's supported Linux distributions before choosing an OS.
-
-**Instant Client Dockerfile Example 3**
-
-Examples 1 and 2 can result in Instant Client packages being pulled over the network unnecessarily. You may prefer to store them locally and then add them to your Docker images. You can do this for both RPM and Zip installs.
-
-For example, you can manually download the latest Basic Light Zip file [instantclient-basiclite-linuxx64.zip](https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip) from [OTN](https://www.oracle.com/database/technologies/instant-client/linux-x86-64-downloads.html). Unzip it to your computer, and remove [unnecessary files](https://docs.oracle.com/en/database/oracle/oracle-database/19/lnoci/instant-client.html#GUID-E436205F-2A39-45AC-BD28-969D4B74128B). For example, after removing unused libraries, you may have a subdirectory such as instantclient_19_5 with these files:
-
 ```
-libclntshcore.so.19.1
-libclntsh.so.19.1
-libnnz19.so
-libociicus.so
+mkdir docker/ic19c
+cd ~docker/ic19c
+ wget https://raw.githubusercontent.com/oracle/docker-images/main/OracleInstantClient/oraclelinux7/19/Dockerfile
 ```
 
-Then your Dockerfile can copy the files into the image:
+ **Building an Instant Client Image**
+
+One you have saved the above commands as ~/docker/ic19/Dockerfile, a Docker image can be built by running:
 
 ```
-# Dockerfile using extracted Instant Client Zip file on host
-
-FROM oraclelinux:7-slim
-
-ADD instantclient_19_5/* /opt/oracle/instantclient_19_5/
-
-RUN yum install -y libaio && \
-    rm -rf /var/cache/yum
-RUN echo /opt/oracle/instantclient_19_5 > /etc/ld.so.conf.d/oic.conf && \
-    ldconfig
+$ sudo docker build -t oraclelinuxSlim/ic19c ~/docker/ic19c/
 ```
 
-Since the Zip files were used in this example, the Dockerfile has to explictly make sure libaio is installed, and also must manually configure the library search path with ldconfig.
-
-**Building an Instant Client Image**
-
-With any of the example Dockerfiles as ~/docker/ic19/Dockerfile, a Docker image can be built by running:
+The "-t oraclelinuxSlim/ic19c" option names the resulting image as "oraclelinuxSlim/ic19":
 
 ```
-$ sudo docker build -t cjones/ic19 ~/docker/ic19/
-```
+$ <copy> docker images</copy>
 
-The "-t cjones/ic19" option names the resulting image as "cjones/ic19":
+REPOSITORY                              TAG                 IMAGE ID            CREATED             SIZE
+oraclelinuxSlim/ic19c                   latest              6bd3ef7e8a86        4 minutes ago       384MB
+oraclelinux                             7-slim              0a28ba78f4c9        5 weeks ago         132MB
 
 ```
-$ sudo docker images
-REPOSITORY           TAG         IMAGE ID        CREATED          SIZE
-cjones/ic19          latest      8108dd0ae2a7    2 minutes ago    232MB
-oraclelinux          7-slim      874477adb545    3 weeks ago      118MB
-```
-
 If you re-run the build command you will see that it completes quickly because each step of the Dockerfile is cached. If you want to force every step to be re-executed, use the --no-cache option.
 
 If you change the Dockerfle commands and re-run the build command, a new image will be created. You may want to remove the old image:
 
-```
-$ sudo docker rmi <image id or name>
-```
 
-Or you can get rid of all dangling images with:
+$ docker rmi <image id or name>
+ Or you can get rid of all dangling images with:
+$ docker image prune
 
-```
-$ sudo docker image prune
-```
-
-To make sure your base images are updated, you can either manually re-pull them, or make sure each build uses the latest image:
-
-```
-$ sudo docker build --pull . . .
-```
-
-**Working Behind a Proxy**
-
-Several [Docker options](https://docs.docker.com/network/proxy/) are useful if you are behind a proxy.
-
-If you are always behind a proxy, you can set the Docker daemon HTTP_PROXY, HTTPS_PROXY, and NO_PROXY environment variables. For example you could set these as a systemd service on the Docker host:
-
-```
-[Service]
-Environment="HTTPS_PROXY=https://proxy.example.com:80/"
-```
-
-On my laptop, which moves between networks, I generally pass parameters at build time:
-
-```
-$ sudo docker build --build-arg https_proxy=http://proxy.example.com:80 -t cjones/myname .
-```
-
-And at run time:
-
-```
-$ sudo docker run --env https_proxy=http://proxy.example.com:80 cjones/myname
-```
-
-Sometimes people put proxies directly in their Dockerfiles, however this makes the images less portable:
-
-```
-ENV https_proxy=http://proxy.example.com:80
-RUN echo proxy=http://proxy.example.com:80 >> /etc/yum.conf
-```
-
-### Building a Python Docker Image
+## Building a Python Docker Image
 
 The Instant Client image can then be used to create a third image that has the desired language and database access API. Starting with an example that uses Python and the cx_Oracle driver (aka API) for Oracle Database, a Dockerfile is:
 
 ```
-FROM cjones/ic19
+FROM oraclelinuxSlim/ic19
 
 RUN yum install -y oracle-epel-release-el7 && \
     yum install -y python36 && \
@@ -304,7 +221,7 @@ This installs Python 3. Other versions of Python could be used, see [Oracle Linu
 With this Dockerfile in ~/docker/python/Dockerfile, an image can be built:
 
 ```
-$ sudo docker build -t cjones/python ~/docker/python/
+$ sudo docker build -t Oracle19c/python ~/docker/python/
 ```
 
 We now have three images, each one adding a layer of functionality:
