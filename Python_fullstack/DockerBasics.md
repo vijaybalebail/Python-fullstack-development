@@ -243,7 +243,7 @@ RUN  yum -y install oracle-nodejs-release-el7 && \
 ```
 mkdir ~/docker/nodejs
 cd ~/docker/nodejs
- wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/nosejs/Dockerfile
+ wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/nodejs/Dockerfile
 ```
 
 This has Linux, Instant Client and Node.js. If desired, the node-oracledb module could have been installed in this Dockerfile from yum, see [Node.js for Oracle Linux](https://yum.oracle.com/oracle-linux-nodejs.html).
@@ -252,17 +252,32 @@ This has Linux, Instant Client and Node.js. If desired, the node-oracledb module
 **Building a Node.js Image**
 
 With one of the above dockerfiles in ~/docker/nodejs/Dockerfile, an image can be built.
-Note that we are builing the Node.js image over image oracleslim19ic  and not oracle19c/python.
-This demostrates the flexibility of Docker to build on work to install different components.
-Once the image is built and registed.. This image iswill be the same in both test,Dev and production environment. Everytime, you need to update any components, we simply update the Dockerfile and create a new image.
+Note that we are building the Node.js image over image oracleslim19ic  and not oracle19c/python.
+This demonstrates the flexibility of Docker to build on effort previously done.
+
+Once the image is built, this image can be pulled in Test, Development and production environment. Everytime, you need to update any components, we simply update the Dockerfile and create a new image.
 
 ### Step 6: Build a Node.js image
 
 ```
-$  docker build -t orcacle19c/node ~/docker/nodejs/
+$  docker build -t orcacle19c/node:14 ~/docker/nodejs/
 ```
 
-### Running an Application Container
+We now have four images.
+
+```
+$ <copy> docker images</copy>
+
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+orcacle19c/node     v14                 61e4e276fe20        19 minutes ago      515MB
+oracle19c/python    latest              933eedc91c23        5 hours ago         443MB
+oracleslim19ic      latest              16d63bf4e27a        5 hours ago         384MB
+oraclelinux         7-slim              0a28ba78f4c9        6 weeks ago         132MB
+```
+### *** Sample Dockerfile for Go, Node.js, Python, PHP or Ruby ***
+If you need to installing Go, Node.js, Python, PHP or ruby on Linux, Then check out Oracle's sample Dockerfiles at github.com/oracle/docker-images/tree/master/OracleLinuxDevelopers. Even if you're not using Docker, these files show the Linux repos and packages to use on bare Oracle Linux.
+
+# TASK 2 : Running an Application Container
 
 Now we have images with language runtimes installed, we can run an application. This example creates a new image from cjones/python. You can try similar steps with Node.js (or other language) applications. In this example we are not connecting to a database - that will come in Part 2 of this blog series.
 
