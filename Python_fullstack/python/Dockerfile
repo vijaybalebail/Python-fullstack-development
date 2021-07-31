@@ -1,6 +1,6 @@
-FROM oraclelinuxSlim/ic19c
+FROM oraclelinuxslim/ic19c
 
-yum -y install     python3 \
+RUN yum -y install     python3 \
                    python3-libs \
                    python3-pip \
                    python3-setuptools \

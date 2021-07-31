@@ -91,7 +91,7 @@ In this workshop, we are using Cloud shell which comes with Docker installed. In
 ### Pulling an Image from the Docker Registry
 There is a publick image of Oracle Operating system in Docker public registry. you can pull an operating system Docker image from [Docker Hub](https://hub.docker.com/_/oraclelinux/). This will be the base that we add the application stack to.
 
-To get an Oracle Linux image run:
+### Step 1: To get an Oracle Linux image run:
 
 ```
 $ <copy> docker image pull oraclelinux:7-slim </copy>
@@ -145,6 +145,7 @@ There are similar Dockerfiles available on [GitHub](https://github.com/oracle/do
 For oraclelinux 7 and instantclient 19c, the docker file to use is ![this.](https://github.com/oracle/docker-images/blob/main/OracleInstantClient/oraclelinux7/19/Dockerfile)
 This workshop has simply copied the contents of the above URL.
 
+### step 2: Create Dockerfile for instantclient 19c
 ```
 mkdir ~/docker/ic19c
 cd ~/docker/ic19c
@@ -155,20 +156,20 @@ cd ~/docker/ic19c
 
 One you have saved the above commands as ~/docker/ic19/Dockerfile, a Docker image can be built by running:
 
+### Step 3: Build Docker image of Oracle Instant lient over OracleLinuxSlim
 ```
 $ <copy> docker build -t oracleslim19ic  ~/docker/ic19c/
 </copy>
 ```
 
-The "-t oraclelinuxSlim/ic19c" option names the resulting image as "oraclelinuxSlim/ic19":
+The "-t oracleslim19ic" option names the resulting image as "oracleslim19ic":
 
 ```
 $ <copy> docker images</copy>
 
-REPOSITORY                              TAG                 IMAGE ID            CREATED             SIZE
-oraclelinuxSlim/ic19c                   latest              6bd3ef7e8a86        4 minutes ago       384MB
-oraclelinux                             7-slim              0a28ba78f4c9        5 weeks ago         132MB
-
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+oracleslim19ic      latest              16d63bf4e27a        7 minutes ago       384MB
+oraclelinux         7-slim              0a28ba78f4c9        6 weeks ago         132MB
 ```
 If you re-run the build command you will see that it completes quickly because each step of the Dockerfile is cached. If you want to force every step to be re-executed, use the --no-cache option.
 
@@ -181,10 +182,10 @@ $ docker image prune
 
 ## Building a Python Docker Image
 
-The Instant Client image can then be used to create a third image that has the desired language and database access API. Starting with an example that uses Python and the cx_Oracle driver (aka API) for Oracle Database, a Dockerfile is:
+The Instant Client image can then be used to create a third image that has the desired language and database access API. Starting with an example that uses Python and the cx_Oracle driver (aka API) for Oracle Database, a sample Dockerfile below.
 
 ```
-FROM oraclelinuxSlim/ic19c
+FROM oraclelinuxslim/ic19c
 
 RUN yum install -y oracle-epel-release-el7 && \
     yum install -y python36 && \
@@ -194,37 +195,41 @@ RUN yum install -y oracle-epel-release-el7 && \
 
 This installs Python 3. Other versions of Python could be used, see [Oracle Linux for Python Developers](https://yum.oracle.com/oracle-linux-python.html).
 
+### Step 4: Create Dockerfile to add Python3 & cx_Oracle to the existing image.
 ```
 <copy>
-mkdir ~docker/python
-cd ~docker/python
+mkdir ~/docker/python
+cd ~/docker/python
 wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/Dockerfile
 </copy>
 ```
 With this Dockerfile in ~/docker/python/Dockerfile, an image with a new layer can be built:
 
+### Step 5: Build Docker image with Python and cx_Oracle library over Oracle instantclient 19c
 ```
-$ sudo docker build -t Oracle19c/python ~/docker/python/
+$ <copy>docker build -t oracle19c/python ~/docker/python/
+</copy>
 ```
 
 We now have three images, each one adding a layer of functionality:
 
 ```
-$ sudo docker images
-REPOSITORY           TAG         IMAGE ID        CREATED          SIZE
-cjones/python        latest      e2993fde3ec8    4 minutes ago    294MB
-cjones/ic19          latest      8108dd0ae2a7    2 minutes ago    232MB
-oraclelinux          7-slim      874477adb545    3 weeks ago      118MB
+$ <copy> docker images</copy>
+
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+oracle19c/python    latest              933eedc91c23        3 hours ago         443MB
+oracleslim19ic      latest              16d63bf4e27a        3 hours ago         384MB
+oraclelinux         7-slim              0a28ba78f4c9        6 weeks ago         132MB
 ```
 
-### Building a Node.js Docker Image
+## Building a Node.js Docker Image
 
 An image with Node.js and Instant Client can be created in a similar way to Python. As standard for Node.js applications, installing the node-oracledb driver will be done later during application installation.
 
 **Node.js Dockerfile Example 1**
 
 The first example Dockerfile is based on the previously created Instant Client image:
-
+Sample Dockerfile below.
 ```
 FROM cjones/ic19
 
@@ -234,68 +239,27 @@ RUN  yum -y install oracle-nodejs-release-el7 && \
      rm -rf /var/cache/yum
 ```
 
+### step 5: Create Dockerfile for Node.js and Oracle.
+```
+mkdir ~/docker/nodejs
+cd ~/docker/nodejs
+ wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/nosejs/Dockerfile
+```
+
 This has Linux, Instant Client and Node.js. If desired, the node-oracledb module could have been installed in this Dockerfile from yum, see [Node.js for Oracle Linux](https://yum.oracle.com/oracle-linux-nodejs.html).
 
-**Node.js Dockerfile Example 2**
-
-This Dockerfile shows an alternative way to install Node.js. It uses a [Node.js 12 image from the Docker Hub](https://hub.docker.com/_/node). Since this is a Debian-based distribution, we add Instant Client Zip files as shown earlier in "Instant Client Dockerfile Example 2":
-
-```
-FROM node:12-buster-slim
-
-WORKDIR /opt/oracle
-
-RUN apt-get update && \
-    apt-get install -y libaio1 unzip wget
-RUN wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip && \
-    unzip instantclient-basiclite-linuxx64.zip && \
-    rm -f instantclient-basiclite-linuxx64.zip && \
-    cd instantclient* && \
-    rm -f *jdbc* *occi* *mysql* *jar uidrvci genezi adrci && \
-    echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf && \
-    ldconfig
-```
-
-Note: you should review Oracle's supported Linux distributions for your Oracle version before making a decision about which to use.
-
-**Node.js Dockerfile Example 3**
-
-One of the other many variants for building a Node.js image is to use a multi-stage builder. Your Dockerfile could be:
-
-```
-FROM oraclelinux:7-slim as builder
-
-ARG release=19
-ARG update=5
-
-RUN yum -y install oracle-release-el7
-RUN yum -y install oracle-instantclient${release}.${update}-basiclite
-
-RUN rm -rf /usr/lib/oracle/${release}.${update}/client64/bin
-WORKDIR /usr/lib/oracle/${release}.${update}/client64/lib/
-RUN rm -rf *jdbc* *occi* *mysql* *jar
-
-# Get a new image
-FROM node:12-buster-slim
-
-# Copy the Instant Client libraries, licenses and config file from the previous image
-COPY --from=builder /usr/lib/oracle /usr/lib/oracle
-COPY --from=builder /usr/share/oracle /usr/share/oracle
-COPY --from=builder /etc/ld.so.conf.d/oracle-instantclient.conf /etc/ld.so.conf.d/oracle-instantclient.conf
-
-RUN apt-get update && apt-get -y upgrade && apt-get -y dist-upgrade && apt-get install -y libaio1 && \
-    apt-get -y autoremove && apt-get -y clean && \
-    ldconfig
-```
-
-This installs Instant Client in an OL7 image and then copies the libraries to a clean Node.js 12 image.
 
 **Building a Node.js Image**
 
-With one of the above dockerfiles in ~/docker/node/Dockerfile, an image can be built as:
+With one of the above dockerfiles in ~/docker/nodejs/Dockerfile, an image can be built.
+Note that we are builing the Node.js image over image oracleslim19ic  and not oracle19c/python.
+This demostrates the flexibility of Docker to build on work to install different components.
+Once the image is built and registed.. This image iswill be the same in both test,Dev and production environment. Everytime, you need to update any components, we simply update the Dockerfile and create a new image.
+
+### Step 6: Build a Node.js image
 
 ```
-$ sudo docker build -t cjones/node ~/docker/node/
+$  docker build -t orcacle19c/node ~/docker/nodejs/
 ```
 
 ### Running an Application Container
