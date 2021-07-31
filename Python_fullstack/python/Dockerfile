@@ -1,4 +1,4 @@
-FROM oraclelinuxslim/ic19c
+FROM oraclelinuxslim
 
 RUN yum -y install     python3 \
                    python3-libs \

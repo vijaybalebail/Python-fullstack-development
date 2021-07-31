@@ -1,4 +1,4 @@
-FROM oraclelinuxslim/ic19c
+FROM oracleslim19ic
 
 RUN yum -y install nodejs node-oracledb-node14 && \
     rm -rf /var/cache/yum/*
