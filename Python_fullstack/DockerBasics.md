@@ -279,12 +279,15 @@ If you need to installing Go, Node.js, Python, PHP or ruby on Linux, Then check 
 
 # TASK 2 : Running an Application Container
 
-Now we have images with language runtimes installed, we can run an application. This example creates a new image from cjones/python. You can try similar steps with Node.js (or other language) applications. In this example we are not connecting to a database - that will come in Part 2 of this blog series.
+Now we have images with language runtimes installed, we can run an application. This example creates a new image from cjones/python. You can try similar steps with Node.js (or other language) applications.
 
-Here's the Dockerfile:
+## Create Dockerfile for New application
+
+Let us consider that we need to run a python program called hi.py in python image we build.
+Below is how the sample Dockerfile will look like:
 
 ```
-FROM cjones/python
+FROM oracle19c/python
 
 WORKDIR /myapp
 
@@ -302,17 +305,28 @@ The simple Python app is:
 
 print("Hello, World!")
 ```
+### Step 6: Create Dockerfile and add python program to existing image.
+```
+<copy>
+mkdir ~/docker/python-app
+cd ~/docker/python-app
+wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/python-app/Dockerfile
+wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/python-app/hi.py
+</copy>
+```
 
-With the Dockefile and hi.py files in ~/docker/pythonapp/, we can build an image:
+
+
+### Step 7: With the Dockefile and hi.py files in ~/docker/python-app/, we can build an image:
 
 ```
-$ sudo docker build -t cjones/pythonapp ~/docker/pythonapp/
+$ docker build -t python-app:v1 ~/docker/python-app/
 ```
 
-and then run a container from it:
+### Step 8: Run the container.
 
 ```
-$ sudo docker run --name pythonapp cjones/pythonapp
+$ docker run --name pythonapp  python-app:v1
 Hello, World!
 ```
 
