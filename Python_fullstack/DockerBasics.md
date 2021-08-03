@@ -337,39 +337,56 @@ $ <copy> docker build -t python-app:v1 ~/docker/python-app/
 ### Step 8: Run the container.
 
 ```
-$ docker run --name python-app  python-app:v1
+$ <copy> docker run --name python-app  python-app:v1
+  </copy>
 Hello, World!
 ```
 
 The application executed and displayed its output message. After running a container, the docker ps -a command can be used to show the status:
 
 ```
-$ docker ps -a
-CONTAINER ID  IMAGE             COMMAND                    CREATED     STATUS                    NAMES
-e9074760444  python-app  "/bin/sh -c 'exec py. . ."  6 secs ago  Exited (0) 2 seconds ago  python-app
+$ <copy> docker ps -a </copy>
+vijay_bale@cloudshell:python-app (us-sanjose-1)$ docker ps -a
+CONTAINER ID    IMAGE          COMMAND                   STATUS      PORTS    NAMES
+c88d4088aa3b    python-app:v1   "/bin/sh -c 'exec py…"   Exited (0)          python-app
 ```
 
 With this container, since the application is not a daemon, the container simply did its work and exited. The basys of microstratergy To re-run the container use:
 
 ```
-$ docker start -ai python-app
+$ <copy> docker start -ai python-app </copy>
 ```
 
-You can remove the container with:
+You can remove the container with docker rm command :
 
 ```
-$ docker rm python-app
+$ <copy>
+  docker ps -a
+  docker rm python-app
+  docker ps -a
+  </copy>
 ```
 
 If you want to see what's in a container, you can start it and get shell access with:
 
 ```
-$  docker run --name pythonappshell -ti cjones/pythonapp /bin/bash
+$ <copy> docker run --name pythonappshell -ti python-app:v1 /bin/bash
+  </copy>
+bash-4.2#
+bash-4.2# ls
+hi.py
+bash-4.2# pwd
+/myapp
 ```
 
-This starts a new container and puts you in the working directory. For example, you can see the python script that was installed and then stop the container:
+This starts a new container and puts you in the working directory. For example, you can see the python script that was installed and then stop the container by exiting from 
 
 ```
+<copy>
+ls
+pwd
+exit
+</copy>
 bash-4.2# ls
 hi.py
 bash-4.2# exit
@@ -377,7 +394,7 @@ bash-4.2# exit
 
 ### A Long Running Application
 
-What if our app is a micro service and we don't want the container to finish immediately? To show a container running as a daemon, I'll swap to using Node.js. (Yes, this still doesn't connect to a database).
+What if our app is a micro service and we don't want the container to finish immediately? To show a container running as a daemon. A good example will be a middle-tier application that will listen on a port for inputs and process data. Below  Node.js example application demonstrates this.
 
 Create a Dockerfile based on the cjones/node image shown earlier:
 
