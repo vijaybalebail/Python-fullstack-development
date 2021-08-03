@@ -147,9 +147,11 @@ This workshop has simply copied the contents of the above URL.
 
 ### step 2: Create Dockerfile for instantclient 19c
 ```
+<copy>
 mkdir ~/docker/ic19c
 cd ~/docker/ic19c
  wget https://raw.githubusercontent.com/oracle/docker-images/main/OracleInstantClient/oraclelinux7/19/Dockerfile
+ </copy>
 ```
 
  **Building an Instant Client Image**
@@ -239,11 +241,13 @@ RUN  yum -y install oracle-nodejs-release-el7 && \
      rm -rf /var/cache/yum
 ```
 
-### step 5: Create Dockerfile for Node.js and Oracle.
+### step 6: Create Dockerfile for Node.js and Oracle.
 ```
+<copy>
 mkdir ~/docker/nodejs
 cd ~/docker/nodejs
  wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/nodejs/Dockerfile
+ </copy>
 ```
 
 This has Linux, Instant Client and Node.js. If desired, the node-oracledb module could have been installed in this Dockerfile from yum, see [Node.js for Oracle Linux](https://yum.oracle.com/oracle-linux-nodejs.html).
@@ -260,7 +264,8 @@ Once the image is built, this image can be pulled in Test, Development and produ
 ### Step 6: Build a Node.js image
 
 ```
-$  docker build -t orcacle19c/node:14 ~/docker/nodejs/
+$ <copy> docker build -t orcacle19c/node:14 ~/docker/nodejs/
+</copy>
 ```
 
 We now have four images.
@@ -279,9 +284,9 @@ If you need to installing Go, Node.js, Python, PHP or ruby on Linux, Then check 
 
 # TASK 2 : Running an Application Container
 
-Now we have images with language runtimes installed, we can run an application. This example creates a new image from cjones/python. You can try similar steps with Node.js (or other language) applications.
+Now we have images with language runtimes like python and node.js installed. We can run an application in these languages. This example creates a new image from oracle19c/python. You can try similar steps with Node.js (or other language) applications.
 
-## Create Dockerfile for New application
+## Create Dockerfile and Python application
 
 Let us consider that we need to run a python program called hi.py in python image we build.
 Below is how the sample Dockerfile will look like:
@@ -295,8 +300,13 @@ ADD hi.py /myapp
 
 CMD exec python3.6 hi.py
 ```
+FROM oracle19c/python : This indicate that we are using the image we just build.
 
-The CMD instruction gives a default command for when the container is run.
+WORKDIR /myapp        : The WORKDIR instruction sets the working directory for any RUN, CMD,etc.
+
+ADD hi.py /myapp      : This adds the file to the image being built.
+
+CMD exec python3.6 hi.py : prove the runtime execution command.  
 
 The simple Python app is:
 
@@ -314,46 +324,47 @@ wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-developmen
 wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/python-app/hi.py
 </copy>
 ```
+As an optional step, you can customize your code to have a different message.
 
 
-
-### Step 7: With the Dockefile and hi.py files in ~/docker/python-app/, we can build an image:
+### Step 7: With the Dockefile and hi.py files in ~/docker/python-app/, build a Docker image:
 
 ```
-$ docker build -t python-app:v1 ~/docker/python-app/
+$ <copy> docker build -t python-app:v1 ~/docker/python-app/
+  </copy>
 ```
 
 ### Step 8: Run the container.
 
 ```
-$ docker run --name pythonapp  python-app:v1
+$ docker run --name python-app  python-app:v1
 Hello, World!
 ```
 
 The application executed and displayed its output message. After running a container, the docker ps -a command can be used to show the status:
 
 ```
-$ sudo docker ps -a
+$ docker ps -a
 CONTAINER ID  IMAGE             COMMAND                    CREATED     STATUS                    NAMES
-e9074760444  cjones/pythonapp  "/bin/sh -c 'exec py. . ."  6 secs ago  Exited (0) 2 seconds ago  pythonapp
+e9074760444  python-app  "/bin/sh -c 'exec py. . ."  6 secs ago  Exited (0) 2 seconds ago  python-app
 ```
 
-With this container, since the application is not a daemon, the container simply did its work and exited. To re-run the container use:
+With this container, since the application is not a daemon, the container simply did its work and exited. The basys of microstratergy To re-run the container use:
 
 ```
-$ sudo docker start -ai pythonapp
+$ docker start -ai python-app
 ```
 
 You can remove the container with:
 
 ```
-$ sudo docker rm pythonapp
+$ docker rm python-app
 ```
 
 If you want to see what's in a container, you can start it and get shell access with:
 
 ```
-$ sudo docker run --name pythonappshell -ti cjones/pythonapp /bin/bash
+$  docker run --name pythonappshell -ti cjones/pythonapp /bin/bash
 ```
 
 This starts a new container and puts you in the working directory. For example, you can see the python script that was installed and then stop the container:
@@ -402,21 +413,21 @@ server.listen(port, () => {
 Put both files in ~/docker/nodeapp/ and build an image:
 
 ```
-$ sudo docker build -t cjones/nodeapp ~/docker/nodeapp/
+$ docker build -t cjones/nodeapp ~/docker/nodeapp/
 ```
 
 Now, a network is configured (more on networks later):
 
 ```
-$ sudo docker network create oracle-net
+$ docker network create oracle-net
 ```
 
 We can run a container using the network, mapping port 3000 from our Docker host into port 3000 inside the container:
 
 ```
-$ sudo docker run -d --name nodeapp --net oracle-net -p 3000:3000 cjones/nodeapp
+$ docker run -d --name nodeapp --net oracle-net -p 3000:3000 cjones/nodeapp
 
-$ sudo docker ps -a
+$ docker ps -a
 
 CONTAINER ID  IMAGE             COMMAND                    CREATED     STATUS        NAMES
 91b0e3f548fd  cjones/nodeapp    "docker-entrypoint.s. . "  6 secs ago  Up seconds    nodeapp
@@ -433,35 +444,39 @@ Everytime you reload the web page, the current time is shown.
 You can stop the container with:
 
 ```
-$ sudo docker stop nodeapp
+$ docker stop nodeapp
 ```
 
 and restart it with:
 
 ```
-$ sudo docker start nodeapp
+$ docker start nodeapp
 ```
 
 If you have issues with the application, try the -ti option to see what went wrong:
 
 ```
-$ sudo docker run -ti --name nodeapp --net oracle-net -p 3000:3000 cjones/nodeapp
+$ docker run -ti --name nodeapp --net oracle-net -p 3000:3000 cjones/nodeapp
 ```
 
 Other useful troubleshooting commands that can be used are:
 
 ```
-$ sudo docker logs nodeapp -f
+$ docker logs nodeapp -f
 ```
 
 and, on a running container, this gives you shell access:
 
 ```
-$ sudo docker exec -ti nodeapp /bin/bash
+$ docker exec -ti nodeapp /bin/bash
 ```
 
 ### Conclusion to Part 1
 
 Part 1 of this series has introduced Docker and shown how to create containers and run simple applications. In [Part 2](https://blogs.oracle.com/opal/docker-for-oracle-database-applications-in-nodejs-and-python-part-2) we'll see how to connect applications to a database, and learn some application best practices.
 
-#### Join th
+# TASK 3 : Running an Application Container and connecting to Autonomous Database (ADB).
+
+## Running a Python application connecting to ADB
+## Running a Node.Js application connecting to ADB
+## Running a Java application connecting to ADB

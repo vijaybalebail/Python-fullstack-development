@@ -1,4 +1,4 @@
-FROM cjones/python
+FROM oracle19c/python
 
 WORKDIR /myapp
 
