@@ -431,25 +431,32 @@ $
 <copy>
 mkdir ~/docker/nodejs-app
 cd ~/docker/nodejs-app
-wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/python-app/Dockerfile
-wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/python-app/hi.py
+wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/nodejs/nodejs-app/Dockerfile
+wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/nodejs/nodejs-app/app.js
 </copy>
+```
+Build nodejs application
 
-docker build -t cjones/nodeapp ~/docker/nodeapp/
+```
+<copy> docker build -t nodejs-app ~/docker/nodejs-app/
+</copy>
 ```
 
 Now, a network is configured (more on networks later):
 
 ```
-$ docker network create oracle-net
+$ <copy> docker network create oracle-net
+  </copy>
 ```
 
 We can run a container using the network, mapping port 3000 from our Docker host into port 3000 inside the container:
 
 ```
-$ docker run -d --name nodeapp --net oracle-net -p 3000:3000 cjones/nodeapp
+$ <copy> docker run -d --name nodeapp --net oracle-net -p 3000:3000 nodejs-app
+  </copy>
 
-$ docker ps -a
+$ <copy> docker ps -a
+  </copy>
 
 CONTAINER ID  IMAGE             COMMAND                    CREATED     STATUS        NAMES
 91b0e3f548fd  cjones/nodeapp    "docker-entrypoint.s. . "  6 secs ago  Up seconds    nodeapp
@@ -466,31 +473,32 @@ Everytime you reload the web page, the current time is shown.
 You can stop the container with:
 
 ```
-$ docker stop nodeapp
+$ <copy> docker stop nodeapp </copy>
 ```
 
 and restart it with:
 
 ```
-$ docker start nodeapp
+$ <copy> docker start nodeapp </copy>
 ```
 
 If you have issues with the application, try the -ti option to see what went wrong:
 
 ```
-$ docker run -ti --name nodeapp --net oracle-net -p 3000:3000 cjones/nodeapp
+$ <copy> docker run -ti --name nodeapp --net oracle-net -p 3000:3000 cjones/nodeapp </copy>
 ```
 
 Other useful troubleshooting commands that can be used are:
 
 ```
-$ docker logs nodeapp -f
+$ <copy> docker logs nodeapp -f </copy>
 ```
 
 and, on a running container, this gives you shell access:
 
 ```
-$ docker exec -ti nodeapp /bin/bash
+$ <copy> docker exec -ti nodeapp /bin/bash
+  </copy>
 ```
 
 ### Conclusion to Part 1

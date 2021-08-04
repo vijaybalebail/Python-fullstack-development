@@ -1,4 +1,4 @@
-FROM orcacle19c/node
+FROM oracle19c/node:14
 
 WORKDIR /myapp
 
