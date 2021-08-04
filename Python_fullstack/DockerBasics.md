@@ -379,7 +379,7 @@ bash-4.2# pwd
 /myapp
 ```
 
-This starts a new container and puts you in the working directory. For example, you can see the python script that was installed and then stop the container by exiting from 
+This starts a new container and puts you in the working directory. For example, you can see the python script that was installed and then stop the container by exiting from
 
 ```
 <copy>
@@ -396,15 +396,12 @@ bash-4.2# exit
 
 What if our app is a micro service and we don't want the container to finish immediately? To show a container running as a daemon. A good example will be a middle-tier application that will listen on a port for inputs and process data. Below  Node.js example application demonstrates this.
 
-Create a Dockerfile based on the cjones/node image shown earlier:
+Create a Dockerfile based on the orcacle19c/node image shown earlier:
 
 ```
-FROM cjones/node
-
+FROM orcacle19c/node
 WORKDIR /myapp
-
 ADD app.js /myapp/
-
 CMD exec node app.js
 ```
 
@@ -419,7 +416,7 @@ const port = 3000;
 const server = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World ' + new Date() + '\n');
+  res.end('Hello World. The time is ' + new Date() + '\n');
 });
 
 server.listen(port, () => {
@@ -427,10 +424,18 @@ server.listen(port, () => {
 });
 ```
 
-Put both files in ~/docker/nodeapp/ and build an image:
+Put both files in ~/docker/node-app/ and build an image:
 
 ```
-$ docker build -t cjones/nodeapp ~/docker/nodeapp/
+$  
+<copy>
+mkdir ~/docker/nodejs-app
+cd ~/docker/nodejs-app
+wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/python-app/Dockerfile
+wget https://raw.githubusercontent.com/vijaybalebail/Python-fullstack-development/main/Python_fullstack/python/python-app/hi.py
+</copy>
+
+docker build -t cjones/nodeapp ~/docker/nodeapp/
 ```
 
 Now, a network is configured (more on networks later):
