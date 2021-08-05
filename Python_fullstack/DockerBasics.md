@@ -264,7 +264,7 @@ Once the image is built, this image can be pulled in Test, Development and produ
 ### Step 6: Build a Node.js image
 
 ```
-$ <copy> docker build -t orcacle19c/node:14 ~/docker/nodejs/
+$ <copy> docker build -t oracle19c/node:14 ~/docker/nodejs/
 </copy>
 ```
 
@@ -274,7 +274,7 @@ We now have four images.
 $ <copy> docker images</copy>
 
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
-orcacle19c/node     v14                 61e4e276fe20        19 minutes ago      515MB
+oracle19c/node      v14                 61e4e276fe20        19 minutes ago      515MB
 oracle19c/python    latest              933eedc91c23        5 hours ago         443MB
 oracleslim19ic      latest              16d63bf4e27a        5 hours ago         384MB
 oraclelinux         7-slim              0a28ba78f4c9        6 weeks ago         132MB
@@ -399,7 +399,7 @@ What if our app is a micro service and we don't want the container to finish imm
 Create a Dockerfile based on the orcacle19c/node image shown earlier:
 
 ```
-FROM orcacle19c/node
+FROM oracle19c/node:14
 WORKDIR /myapp
 ADD app.js /myapp/
 CMD exec node app.js
